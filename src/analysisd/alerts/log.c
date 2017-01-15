@@ -1,39 +1,39 @@
-/* Copyright (C) 2009 Trend Micro Inc.
- * All right reserved.
- *
- * This program is a free software; you can redistribute it
- * and/or modify it under the terms of the GNU General Public
- * License (version 2) as published by the FSF - Free Software
- * Foundation
- */
+    /* Copyright (C) 2009 Trend Micro Inc.
+    * All right reserved.
+    *
+    * This program is a free software; you can redistribute it
+    * and/or modify it under the terms of the GNU General Public
+    * License (version 2) as published by the FSF - Free Software
+    * Foundation
+    */
 
-#include "shared.h"
-#include "log.h"
-#include "alerts.h"
-#include "getloglocation.h"
-#include "rules.h"
-#include "eventinfo.h"
-#include "config.h"
+    #include "shared.h"
+    #include "log.h"
+    #include "alerts.h"
+    #include "getloglocation.h"
+    #include "rules.h"
+    #include "eventinfo.h"
+    #include "config.h"
 
-#ifdef LIBGEOIP_ENABLED
-#include "GeoIP.h"
-#include "GeoIPCity.h"
+    #ifdef LIBGEOIP_ENABLED
+    #include "GeoIP.h"
+    #include "GeoIPCity.h"
 
-#define RFC1918_10     (167772160u  & 4278190080u)       /* 10/8        */
-#define RFC1918_172    (2886729728u & 4293918720u)       /* 172.17/12   */
-#define RFC1918_192    (3232235520u & 4294901760u)       /* 192.168/16  */
-#define NETMASK_8      4278190080u                       /* 255.0.0.0   */
-#define NETMASK_12     4293918720u                       /* 255.240.0.0 */
-#define NETMASK_16     4294901760u                       /* 255.255.0.0 */
+    #define RFC1918_10     (167772160u  & 4278190080u)       /* 10/8        */
+    #define RFC1918_172    (2886729728u & 4293918720u)       /* 172.17/12   */
+    #define RFC1918_192    (3232235520u & 4294901760u)       /* 192.168/16  */
+    #define NETMASK_8      4278190080u                       /* 255.0.0.0   */
+    #define NETMASK_12     4293918720u                       /* 255.240.0.0 */
+    #define NETMASK_16     4294901760u                       /* 255.255.0.0 */
 
-static const char *_mk_NA( const char *p )
-{
+    static const char *_mk_NA( const char *p )
+    {
     return (p ? p : "N/A");
-}
+    }
 
-/* Convert a dot-quad IP address into long format */
-static unsigned long StrIP2Int(const char *ip)
-{
+    /* Convert a dot-quad IP address into long format */
+    static unsigned long StrIP2Int(const char *ip)
+    {
     unsigned int c1, c2, c3, c4;
     /* IP address is not coming from user input -> We can trust it */
     /* Only minimal checking is performed */
@@ -44,11 +44,11 @@ static unsigned long StrIP2Int(const char *ip)
 
     sscanf(ip, "%u.%u.%u.%u", &c1, &c2, &c3, &c4);
     return ((unsigned long)c4 + c3 * 256 + c2 * 256 * 256 + c1 * 256 * 256 * 256);
-}
+    }
 
-/* Use the GeoIP API to locate an IP address */
-static void GeoIP_Lookup(const char *ip, char *buffer, const size_t length)
-{
+    /* Use the GeoIP API to locate an IP address */
+    static void GeoIP_Lookup(const char *ip, char *buffer, const size_t length)
+    {
     GeoIP   *gi;
     GeoIPRecord *gir;
 
@@ -97,15 +97,15 @@ static void GeoIP_Lookup(const char *ip, char *buffer, const size_t length)
     GeoIP_delete(gi);
     snprintf(buffer, length, "Unknown (4)");
     return;
-}
-#endif /* LIBGEOIP_ENABLED */
+    }
+    #endif /* LIBGEOIP_ENABLED */
 
-/* Drop/allow patterns */
-static OSMatch FWDROPpm;
-static OSMatch FWALLOWpm;
+    /* Drop/allow patterns */
+    static OSMatch FWDROPpm;
+    static OSMatch FWALLOWpm;
 
-/* Allow custom alert output tokens */
-typedef enum e_custom_alert_tokens_id {
+    /* Allow custom alert output tokens */
+    typedef enum e_custom_alert_tokens_id {
     CUSTOM_ALERT_TOKEN_TIMESTAMP = 0,
     CUSTOM_ALERT_TOKEN_FTELL,
     CUSTOM_ALERT_TOKEN_RULE_ALERT_OPTIONS,
@@ -119,9 +119,9 @@ typedef enum e_custom_alert_tokens_id {
     CUSTOM_ALERT_TOKEN_FULL_LOG,
     CUSTOM_ALERT_TOKEN_RULE_GROUP,
     CUSTOM_ALERT_TOKEN_LAST
-} CustomAlertTokenID;
+    } CustomAlertTokenID;
 
-static const char CustomAlertTokenName[CUSTOM_ALERT_TOKEN_LAST][15] = {
+    static const char CustomAlertTokenName[CUSTOM_ALERT_TOKEN_LAST][15] = {
     { "$TIMESTAMP" },
     { "$FTELL" },
     { "$RULEALERT" },
@@ -134,14 +134,14 @@ static const char CustomAlertTokenName[CUSTOM_ALERT_TOKEN_LAST][15] = {
     { "$DSTUSER" },
     { "$FULLLOG" },
     { "$RULEGROUP" },
-};
+    };
 
-/* Store the events in a file
- * The string must be null terminated and contain
- * any necessary new lines, tabs, etc.
- */
-void OS_Store(const Eventinfo *lf)
-{
+    /* Store the events in a file
+    * The string must be null terminated and contain
+    * any necessary new lines, tabs, etc.
+    */
+    void OS_Store(const Eventinfo *lf)
+    {
     if (strcmp(lf->location, "ossec-keepalive") == 0) {
         return;
     }
@@ -162,11 +162,11 @@ void OS_Store(const Eventinfo *lf)
 
     fflush(_eflog);
     return;
-}
+    }
 
-void OS_LogOutput(Eventinfo *lf)
-{
-#ifdef LIBGEOIP_ENABLED
+    void OS_LogOutput(Eventinfo *lf)
+    {
+    #ifdef LIBGEOIP_ENABLED
     char geoip_msg_src[OS_SIZE_1024 + 1];
     char geoip_msg_dst[OS_SIZE_1024 + 1];
     geoip_msg_src[0] = '\0';
@@ -179,48 +179,96 @@ void OS_LogOutput(Eventinfo *lf)
             GeoIP_Lookup(lf->dstip, geoip_msg_dst, OS_SIZE_1024);
         }
     }
-#endif
+    #endif
     printf(
-            "-- BEGIN ALERT --\nAlert ID: %ld.%ld\nGroup: %s\nYear: %d\nMonth: %s\nDay: %02d\nTime: %s\nHostname: %s\nLocation: %s\nRule: %d\nLevel: %d\nAction: %s\nComment: '%s'\nProgram Name: %s\nURL: %s\nStatus: %s\nProtocol: %s\nSource IP: %s\nSource Location: %s\nSource Port: %s\nDestination IP: %s\nDest Location: %s\nDest Port: %s\nDst User: %s\nFull Log: %.1256s\n",
-        (long int)lf->time,
-        __crt_ftell,
-        lf->generated_rule->group == NULL ? "" : lf->generated_rule->group,
-        lf->year,
-        lf->mon,
-        lf->day,
-        lf->hour,
-        lf->hostname == NULL ? "" : lf->hostname,
-        lf->location == NULL ? "" : lf->location,
-        lf->generated_rule->sigid,
-        lf->generated_rule->level,
-        lf->action == NULL ? "" : lf->action,
-        lf->generated_rule->comment == NULL ? "" : lf->generated_rule->comment,
-        lf->program_name == NULL ? "" : lf->program_name,
-        lf->url == NULL ? "" : lf->url,
-        lf->status == NULL ? "" : lf->status,
-        lf->protocol == NULL ? "" : lf->protocol,
-        lf->srcip == NULL ? "" : lf->srcip,
+    "-- BEGIN ALERT --\n"
+    "Alert ID: %ld.%ld\n"
+    "Group: %s\n"
+    "Year: %d\n"
+    "Month: %s\n"
+    "Day: %02d\n"
+    "Time: %s\n"
+    "Hostname: %s\n"
+    "Location: %s\n"
+    "Rule Sig ID: %d\n"
+    "Fired Times: %d\n"
+    "Level: %d\n"
+    "Action: %s\n"
+    "Comment: '%s'\n"
+    "Program Name: %s\n"
+    "URL: %s\n"
+    "Status: %s\n"
+    "Protocol: %s\n"
+    "Source IP: %s\n"
+    "Source Location: %s\n"
+    "Source Port: %s\n"
+    "Destination IP: %s\n"
+    "Dest Location: %s\n"
+    "Dest Port: %s\n"
+    "Dst User: %s\n"
+    "Filename: %s\n"
+    "Perm Before: %d\n"
+    "Perm After: %d\n"
+    "MD5 Before: %s\n"
+    "MD5 After: %s\n"
+    "SHA1 Before: %s\n"
+    "SHA1 After: %s\n"
+    "Size Before: %s\n"
+    "Size After: %s\n"
+    "Owner Before: %s\n"
+    "Owner After: %s\n"
+    "Group Owner Before: %s\n"
+    "Group Owner After: %s\n"
+    "Full Log: %.1256s\n",
+    (long int)lf->time,
+    __crt_ftell,
+    lf->generated_rule->group == NULL ? "" : lf->generated_rule->group,
+    lf->year,
+    lf->mon,
+    lf->day,
+    lf->hour,
+    lf->hostname == NULL ? "" : lf->hostname,
+    lf->location == NULL ? "" : lf->location,
+    lf->generated_rule->sigid,
+    lf->generated_rule->firedtimes,
+    lf->generated_rule->level,
+    lf->action == NULL ? "" : lf->action,
+    lf->generated_rule->comment == NULL ? "" : lf->generated_rule->comment,
+    lf->program_name == NULL ? "" : lf->program_name,
+    lf->url == NULL ? "" : lf->url,
+    lf->status == NULL ? "" : lf->status,
+    lf->protocol == NULL ? "" : lf->protocol,
+    lf->srcip == NULL ? "" : lf->srcip,
 
 #ifdef LIBGEOIP_ENABLED
-        (strlen(geoip_msg_src) == 0) ? "" : geoip_msg_src,
+    (strlen(geoip_msg_src) == 0) ? "" : geoip_msg_src,
 #else
-        "",
+    "",
 #endif
-        lf->srcport == NULL ? "" : lf->srcport,
-
-        lf->dstip == NULL ? "" : lf->dstip,
+    lf->srcport == NULL ? "" : lf->srcport,
+    lf->dstip == NULL ? "" : lf->dstip,
 
 #ifdef LIBGEOIP_ENABLED
-        (strlen(geoip_msg_dst) == 0) ? "" : geoip_msg_dst,
+    (strlen(geoip_msg_dst) == 0) ? "" : geoip_msg_dst,
 #else
-        "",
+    "",
 #endif
-
-        lf->dstport == NULL ? "" : lf->dstport,
-
-        lf->dstuser == NULL ? "" : lf->dstuser,
-
-        lf->full_log);
+    lf->dstport == NULL ? "" : lf->dstport,
+    lf->dstuser == NULL ? "" : lf->dstuser,
+    lf->filename == NULL ? "" : lf->filename,
+    lf->perm_before,
+    lf->perm_after,
+    lf->md5_before == NULL ? "" : lf->md5_before,
+    lf->md5_after == NULL ? "" : lf->md5_after,
+    lf->sha1_before == NULL ? "" : lf->sha1_before,
+    lf->sha1_after == NULL ? "" : lf->sha1_after,
+    lf->size_before == NULL ? "" : lf->size_before,
+    lf->size_after == NULL ? "" : lf->size_after,
+    lf->owner_before == NULL ? "" : lf->owner_before,
+    lf->owner_after == NULL ? "" : lf->owner_after,
+    lf->gowner_before == NULL ? "" : lf->gowner_before,
+    lf->gowner_after == NULL ? "" : lf->gowner_after,
+        lf->full_log == NULL ? "" : lf->full_log);
 
     /* Print the last events if present */
     if (lf->generated_rule->last_events) {
@@ -233,13 +281,14 @@ void OS_LogOutput(Eventinfo *lf)
     }
 
     printf("-- END ALERT --\n");
+
     fflush(stdout);
     return;
-}
+    }
 
-void OS_Log(Eventinfo *lf)
-{
-#ifdef LIBGEOIP_ENABLED
+    void OS_Log(Eventinfo *lf)
+    {
+    #ifdef LIBGEOIP_ENABLED
     char geoip_msg_src[OS_SIZE_1024 + 1];
     char geoip_msg_dst[OS_SIZE_1024 + 1];
     geoip_msg_src[0] = '\0';
@@ -252,49 +301,97 @@ void OS_Log(Eventinfo *lf)
             GeoIP_Lookup(lf->dstip, geoip_msg_dst, OS_SIZE_1024 );
         }
     }
-#endif
+    #endif
     /* Writing to the alert log file */
     fprintf(_aflog,
-            "-- BEGIN ALERT --\nAlert ID: %ld.%ld\nGroup: %s\nYear: %d\nMonth: %s\nDay: %02d\nTime: %s\nHostname: %s\nLocation: %s\nRule: %d\nLevel: %d\nAction: %s\nComment: '%s'\nProgram Name: %s\nURL: %s\nStatus: %s\nProtocol: %s\nSource IP: %s\nSource Location: %s\nSource Port: %s\nDestination IP: %s\nDest Location: %s\nDest Port: %s\nDst User: %s\nFull Log: %.1256s\n",
-        (long int)lf->time,
-        __crt_ftell,
-        lf->generated_rule->group == NULL ? "" : lf->generated_rule->group,
-        lf->year,
-        lf->mon,
-        lf->day,
-        lf->hour,
-        lf->hostname == NULL ? "" : lf->hostname,
-        lf->location == NULL ? "" : lf->location,
-        lf->generated_rule->sigid,
-        lf->generated_rule->level,
-        lf->action == NULL ? "" : lf->action,
-        lf->generated_rule->comment == NULL ? "" : lf->generated_rule->comment,
-        lf->program_name == NULL ? "" : lf->program_name,
-        lf->url == NULL ? "" : lf->url,
-        lf->status == NULL ? "" : lf->status,
-        lf->protocol == NULL ? "" : lf->protocol,
-        lf->srcip == NULL ? "" : lf->srcip,
+    "-- BEGIN ALERT --\n"
+    "Alert ID: %ld.%ld\n"
+    "Group: %s\n"
+    "Year: %d\n"
+    "Month: %s\n"
+    "Day: %02d\n"
+    "Time: %s\n"
+    "Hostname: %s\n"
+    "Location: %s\n"
+    "Rule Sig ID: %d\n"
+    "Fired Times: %d\n"
+    "Level: %d\n"
+    "Action: %s\n"
+    "Comment: '%s'\n"
+    "Program Name: %s\n"
+    "URL: %s\n"
+    "Status: %s\n"
+    "Protocol: %s\n"
+    "Source IP: %s\n"
+    "Source Location: %s\n"
+    "Source Port: %s\n"
+    "Destination IP: %s\n"
+    "Dest Location: %s\n"
+    "Dest Port: %s\n"
+    "Dst User: %s\n"
+    "Filename: %s\n"
+    "Perm Before: %d\n"
+    "Perm After: %d\n"
+    "MD5 Before: %s\n"
+    "MD5 After: %s\n"
+    "SHA1 Before: %s\n"
+    "SHA1 After: %s\n"
+    "Size Before: %s\n"
+    "Size After: %s\n"
+    "Owner Before: %s\n"
+    "Owner After: %s\n"
+    "Group Owner Before: %s\n"
+    "Group Owner After: %s\n"
+    "Full Log: %.1256s\n",
+    (long int)lf->time,
+    __crt_ftell,
+    lf->generated_rule->group == NULL ? "" : lf->generated_rule->group,
+    lf->year,
+    lf->mon,
+    lf->day,
+    lf->hour,
+    lf->hostname == NULL ? "" : lf->hostname,
+    lf->location == NULL ? "" : lf->location,
+    lf->generated_rule->sigid,
+    lf->generated_rule->firedtimes,
+    lf->generated_rule->level,
+    lf->action == NULL ? "" : lf->action,
+    lf->generated_rule->comment == NULL ? "" : lf->generated_rule->comment,
+    lf->program_name == NULL ? "" : lf->program_name,
+    lf->url == NULL ? "" : lf->url,
+    lf->status == NULL ? "" : lf->status,
+    lf->protocol == NULL ? "" : lf->protocol,
+    lf->srcip == NULL ? "" : lf->srcip,
 
 #ifdef LIBGEOIP_ENABLED
-        (strlen(geoip_msg_src) == 0) ? "" : geoip_msg_src,
+    (strlen(geoip_msg_src) == 0) ? "" : geoip_msg_src,
 #else
-        "",
+    "",
 #endif
-        lf->srcport == NULL ? "" : lf->srcport,
-
-        lf->dstip == NULL ? "" : lf->dstip,
+    lf->srcport == NULL ? "" : lf->srcport,
+    lf->dstip == NULL ? "" : lf->dstip,
 
 #ifdef LIBGEOIP_ENABLED
-        (strlen(geoip_msg_dst) == 0) ? "" : geoip_msg_dst,
+    (strlen(geoip_msg_dst) == 0) ? "" : geoip_msg_dst,
 #else
-        "",
+    "",
 #endif
-
-        lf->dstport == NULL ? "" : lf->dstport,
-
-        lf->dstuser == NULL ? "" : lf->dstuser,
-
-        lf->full_log);
+    lf->dstport == NULL ? "" : lf->dstport,
+    lf->dstuser == NULL ? "" : lf->dstuser,
+    lf->filename == NULL ? "" : lf->filename,
+    lf->perm_before,
+    lf->perm_after,
+    lf->md5_before == NULL ? "" : lf->md5_before,
+    lf->md5_after == NULL ? "" : lf->md5_after,
+    lf->sha1_before == NULL ? "" : lf->sha1_before,
+    lf->sha1_after == NULL ? "" : lf->sha1_after,
+    lf->size_before == NULL ? "" : lf->size_before,
+    lf->size_after == NULL ? "" : lf->size_after,
+    lf->owner_before == NULL ? "" : lf->owner_before,
+    lf->owner_after == NULL ? "" : lf->owner_after,
+    lf->gowner_before == NULL ? "" : lf->gowner_before,
+    lf->gowner_after == NULL ? "" : lf->gowner_after,
+    lf->full_log == NULL ? "" : lf->full_log);
 
     /* Print the last events if present */
     if (lf->generated_rule->last_events) {
@@ -310,10 +407,10 @@ void OS_Log(Eventinfo *lf)
     fflush(_aflog);
 
     return;
-}
+    }
 
-void OS_CustomLog(const Eventinfo *lf, const char *format)
-{
+    void OS_CustomLog(const Eventinfo *lf, const char *format)
+    {
     char *log;
     char *tmp_log;
     char tmp_buffer[1024];
@@ -421,10 +518,10 @@ void OS_CustomLog(const Eventinfo *lf, const char *format)
     }
 
     return;
-}
+    }
 
-void OS_InitFwLog()
-{
+    void OS_InitFwLog()
+    {
     /* Initialize fw log regexes */
     if (!OSMatch_Compile(FWDROP, &FWDROPpm, 0)) {
         ErrorExit(REGEX_COMPILE, ARGV0, FWDROP,
@@ -435,10 +532,10 @@ void OS_InitFwLog()
         ErrorExit(REGEX_COMPILE, ARGV0, FWALLOW,
                   FWALLOWpm.error);
     }
-}
+    }
 
-int FW_Log(Eventinfo *lf)
-{
+    int FW_Log(Eventinfo *lf)
+    {
     /* If we don't have the srcip or the
      * action, there is no point in going
      * forward over here
@@ -518,5 +615,4 @@ int FW_Log(Eventinfo *lf)
     fflush(_fflog);
 
     return (1);
-}
-
+    }
