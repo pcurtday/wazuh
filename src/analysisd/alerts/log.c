@@ -181,7 +181,7 @@ void OS_LogOutput(Eventinfo *lf)
     }
 #endif
     printf(
-            "-- BEGIN ALERT --\n** Alert: %ld.%ld\nGroup: %s\nYear: %d\nMonth: %s\nDay: %02d\nTime: %s\nHostname: %s\nLocation: %s\nRule: %d\nLevel: %d\nAction: %s\nComment: '%s'\nProgram Name: %s\nURL: %s\nStatus: %s\nProtocol: %s\nSource IP: %s\nSource Location: %s\nSource Port: %s\nDestination IP: %s\nDest Location: %s\nDest Port: %s\nDst User: %s\nFull Log: %.1256s\n",
+            "-- BEGIN ALERT --\nAlert ID: %ld.%ld\nGroup: %s\nYear: %d\nMonth: %s\nDay: %02d\nTime: %s\nHostname: %s\nLocation: %s\nRule: %d\nLevel: %d\nAction: %s\nComment: '%s'\nProgram Name: %s\nURL: %s\nStatus: %s\nProtocol: %s\nSource IP: %s\nSource Location: %s\nSource Port: %s\nDestination IP: %s\nDest Location: %s\nDest Port: %s\nDst User: %s\nFull Log: %.1256s\n",
         (long int)lf->time,
         __crt_ftell,
         lf->generated_rule->group == NULL ? "" : lf->generated_rule->group,
@@ -255,7 +255,7 @@ void OS_Log(Eventinfo *lf)
 #endif
     /* Writing to the alert log file */
     fprintf(_aflog,
-            "-- BEGIN ALERT --\n** Alert: %ld.%ld\nGroup: %s\nYear: %d\nMonth: %s\nDay: %02d\nTime: %s\nHostname: %s\nLocation: %s\nRule: %d\nLevel: %d\nAction: %s\nComment: '%s'\nProgram Name: %s\nURL: %s\nStatus: %s\nProtocol: %s\nSource IP: %s\nSource Location: %s\nSource Port: %s\nDestination IP: %s\nDest Location: %s\nDest Port: %s\nDst User: %s\nFull Log: %.1256s\n",
+            "-- BEGIN ALERT --\nAlert ID: %ld.%ld\nGroup: %s\nYear: %d\nMonth: %s\nDay: %02d\nTime: %s\nHostname: %s\nLocation: %s\nRule: %d\nLevel: %d\nAction: %s\nComment: '%s'\nProgram Name: %s\nURL: %s\nStatus: %s\nProtocol: %s\nSource IP: %s\nSource Location: %s\nSource Port: %s\nDestination IP: %s\nDest Location: %s\nDest Port: %s\nDst User: %s\nFull Log: %.1256s\n",
         (long int)lf->time,
         __crt_ftell,
         lf->generated_rule->group == NULL ? "" : lf->generated_rule->group,
