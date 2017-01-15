@@ -181,53 +181,43 @@ void OS_LogOutput(Eventinfo *lf)
     }
 #endif
     printf(
-        "** Alert %ld.%ld:%s - %s\n"
-        "%d %s %02d %s %s%s%s\nRule: %d (level %d) -> '%s'"
-        "%s%s%s%s%s%s%s%s%s%s%s%s%s%s\n%.1256s\n",
+            "-- BEGIN ALERT --\n** Alert: %ld.%ld\nGroup: %s\nYear: %d\nMonth: %s\nDay: %02d\nTime: %s\nHostname: %s\nLocation: %s\nRule: %d\nLevel: %d\nAction: %s\nComment: '%s'\nProgram Name: %s\nURL: %s\nStatus: %s\nProtocol: %s\nSource IP: %s\nSource Location: %s\nSource Port: %s\nDestination IP: %s\nDest Location: %s\nDest Port: %s\nDst User: %s\nFull Log: %.1256s\n",
         (long int)lf->time,
         __crt_ftell,
-        lf->generated_rule->alert_opts & DO_MAILALERT ? " mail " : "",
-        lf->generated_rule->group,
+        lf->generated_rule->group == NULL ? "" : lf->generated_rule->group,
         lf->year,
         lf->mon,
         lf->day,
         lf->hour,
-        lf->hostname != lf->location ? lf->hostname : "",
-        lf->hostname != lf->location ? "->" : "",
-        lf->location,
+        lf->hostname == NULL ? "" : lf->hostname,
+        lf->location == NULL ? "" : lf->location,
         lf->generated_rule->sigid,
         lf->generated_rule->level,
-        lf->generated_rule->comment,
-
-        lf->srcip == NULL ? "" : "\nSrc IP: ",
+        lf->action == NULL ? "" : lf->action,
+        lf->generated_rule->comment == NULL ? "" : lf->generated_rule->comment,
+        lf->program_name == NULL ? "" : lf->program_name,
+        lf->url == NULL ? "" : lf->url,
+        lf->status == NULL ? "" : lf->status,
+        lf->protocol == NULL ? "" : lf->protocol,
         lf->srcip == NULL ? "" : lf->srcip,
 
 #ifdef LIBGEOIP_ENABLED
-        (strlen(geoip_msg_src) == 0) ? "" : "\nSrc Location: ",
         (strlen(geoip_msg_src) == 0) ? "" : geoip_msg_src,
 #else
         "",
-        "",
 #endif
-
-        lf->srcport == NULL ? "" : "\nSrc Port: ",
         lf->srcport == NULL ? "" : lf->srcport,
 
-        lf->dstip == NULL ? "" : "\nDst IP: ",
         lf->dstip == NULL ? "" : lf->dstip,
 
 #ifdef LIBGEOIP_ENABLED
-        (strlen(geoip_msg_dst) == 0) ? "" : "\nDst Location: ",
         (strlen(geoip_msg_dst) == 0) ? "" : geoip_msg_dst,
 #else
         "",
-        "",
 #endif
 
-        lf->dstport == NULL ? "" : "\nDst Port: ",
         lf->dstport == NULL ? "" : lf->dstport,
 
-        lf->dstuser == NULL ? "" : "\nUser: ",
         lf->dstuser == NULL ? "" : lf->dstuser,
 
         lf->full_log);
@@ -236,14 +226,13 @@ void OS_LogOutput(Eventinfo *lf)
     if (lf->generated_rule->last_events) {
         char **lasts = lf->generated_rule->last_events;
         while (*lasts) {
-            printf("%.1256s\n", *lasts);
+            printf("Events: %.1256s\n", *lasts);
             lasts++;
         }
         lf->generated_rule->last_events[0] = NULL;
     }
 
-    printf("\n");
-
+    printf("-- END ALERT --\n");
     fflush(stdout);
     return;
 }
@@ -266,68 +255,58 @@ void OS_Log(Eventinfo *lf)
 #endif
     /* Writing to the alert log file */
     fprintf(_aflog,
-            "** Alert %ld.%ld:%s - %s\n"
-            "%d %s %02d %s %s%s%s\nRule: %d (level %d) -> '%s'"
-            "%s%s%s%s%s%s%s%s%s%s%s%s%s%s\n%.1256s\n",
-            (long int)lf->time,
-            __crt_ftell,
-            lf->generated_rule->alert_opts & DO_MAILALERT ? " mail " : "",
-            lf->generated_rule->group,
-            lf->year,
-            lf->mon,
-            lf->day,
-            lf->hour,
-            lf->hostname != lf->location ? lf->hostname : "",
-            lf->hostname != lf->location ? "->" : "",
-            lf->location,
-            lf->generated_rule->sigid,
-            lf->generated_rule->level,
-            lf->generated_rule->comment,
-
-            lf->srcip == NULL ? "" : "\nSrc IP: ",
-            lf->srcip == NULL ? "" : lf->srcip,
-
-#ifdef LIBGEOIP_ENABLED
-            (strlen(geoip_msg_src) == 0) ? "" : "\nSrc Location: ",
-            (strlen(geoip_msg_src) == 0) ? "" : geoip_msg_src,
-#else
-            "",
-            "",
-#endif
-
-            lf->srcport == NULL ? "" : "\nSrc Port: ",
-            lf->srcport == NULL ? "" : lf->srcport,
-
-            lf->dstip == NULL ? "" : "\nDst IP: ",
-            lf->dstip == NULL ? "" : lf->dstip,
+            "-- BEGIN ALERT --\n** Alert: %ld.%ld\nGroup: %s\nYear: %d\nMonth: %s\nDay: %02d\nTime: %s\nHostname: %s\nLocation: %s\nRule: %d\nLevel: %d\nAction: %s\nComment: '%s'\nProgram Name: %s\nURL: %s\nStatus: %s\nProtocol: %s\nSource IP: %s\nSource Location: %s\nSource Port: %s\nDestination IP: %s\nDest Location: %s\nDest Port: %s\nDst User: %s\nFull Log: %.1256s\n",
+        (long int)lf->time,
+        __crt_ftell,
+        lf->generated_rule->group == NULL ? "" : lf->generated_rule->group,
+        lf->year,
+        lf->mon,
+        lf->day,
+        lf->hour,
+        lf->hostname == NULL ? "" : lf->hostname,
+        lf->location == NULL ? "" : lf->location,
+        lf->generated_rule->sigid,
+        lf->generated_rule->level,
+        lf->action == NULL ? "" : lf->action,
+        lf->generated_rule->comment == NULL ? "" : lf->generated_rule->comment,
+        lf->program_name == NULL ? "" : lf->program_name,
+        lf->url == NULL ? "" : lf->url,
+        lf->status == NULL ? "" : lf->status,
+        lf->protocol == NULL ? "" : lf->protocol,
+        lf->srcip == NULL ? "" : lf->srcip,
 
 #ifdef LIBGEOIP_ENABLED
-            (strlen(geoip_msg_dst) == 0) ? "" : "\nDst Location: ",
-            (strlen(geoip_msg_dst) == 0) ? "" : geoip_msg_dst,
+        (strlen(geoip_msg_src) == 0) ? "" : geoip_msg_src,
 #else
-            "",
-            "",
+        "",
+#endif
+        lf->srcport == NULL ? "" : lf->srcport,
+
+        lf->dstip == NULL ? "" : lf->dstip,
+
+#ifdef LIBGEOIP_ENABLED
+        (strlen(geoip_msg_dst) == 0) ? "" : geoip_msg_dst,
+#else
+        "",
 #endif
 
-            lf->dstport == NULL ? "" : "\nDst Port: ",
-            lf->dstport == NULL ? "" : lf->dstport,
+        lf->dstport == NULL ? "" : lf->dstport,
 
-            lf->dstuser == NULL ? "" : "\nUser: ",
-            lf->dstuser == NULL ? "" : lf->dstuser,
+        lf->dstuser == NULL ? "" : lf->dstuser,
 
-            lf->full_log);
+        lf->full_log);
 
     /* Print the last events if present */
     if (lf->generated_rule->last_events) {
         char **lasts = lf->generated_rule->last_events;
         while (*lasts) {
-            fprintf(_aflog, "%.1256s\n", *lasts);
+            fprintf(_aflog, "Events:%.1256s\n", *lasts);
             lasts++;
         }
         lf->generated_rule->last_events[0] = NULL;
     }
 
-    fprintf(_aflog, "\n");
+    fprintf(_aflog, "-- END ALERT --\n");
     fflush(_aflog);
 
     return;
