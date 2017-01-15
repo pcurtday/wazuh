@@ -193,6 +193,7 @@
     "Rule Sig ID: %d\n"
     "Fired Times: %d\n"
     "Level: %d\n"
+    "CVE: %s\n"
     "Action: %s\n"
     "Comment: '%s'\n"
     "Program Name: %s\n"
@@ -232,6 +233,7 @@
     lf->generated_rule->sigid,
     lf->generated_rule->firedtimes,
     lf->generated_rule->level,
+    lf->generated_rule->cve == NULL ? "" : lf->generated_rule->cve,
     lf->action == NULL ? "" : lf->action,
     lf->generated_rule->comment == NULL ? "" : lf->generated_rule->comment,
     lf->program_name == NULL ? "" : lf->program_name,
@@ -316,6 +318,7 @@
     "Rule Sig ID: %d\n"
     "Fired Times: %d\n"
     "Level: %d\n"
+    "CVE: %s\n"
     "Action: %s\n"
     "Comment: '%s'\n"
     "Program Name: %s\n"
@@ -355,6 +358,7 @@
     lf->generated_rule->sigid,
     lf->generated_rule->firedtimes,
     lf->generated_rule->level,
+    lf->generated_rule->cve == NULL ? "" : lf->generated_rule->cve,
     lf->action == NULL ? "" : lf->action,
     lf->generated_rule->comment == NULL ? "" : lf->generated_rule->comment,
     lf->program_name == NULL ? "" : lf->program_name,
