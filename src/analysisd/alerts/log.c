@@ -182,7 +182,7 @@
     #endif
     printf(
     "-- BEGIN ALERT --\n"
-    "Alert ID: %ld.%ld\n"
+    "AlertId: %ld.%ld\n"
     "Group: %s\n"
     "Year: %d\n"
     "Month: %s\n"
@@ -190,37 +190,37 @@
     "Time: %s\n"
     "Hostname: %s\n"
     "Location: %s\n"
-    "Rule Sig ID: %d\n"
-    "Fired Times: %d\n"
+    "RuleId: %d\n"
+    "FiredTimes: %d\n"
     "Level: %d\n"
-    "CVE: %s\n"
+    "Cve: %s\n"
     "Action: %s\n"
     "Comment: '%s'\n"
-    "Program Name: %s\n"
-    "URL: %s\n"
+    "ProgramName: %s\n"
+    "Url: %s\n"
     "Status: %s\n"
     "Protocol: %s\n"
-    "Source IP: %s\n"
-    "Source Location: %s\n"
-    "Source Port: %s\n"
-    "Destination IP: %s\n"
-    "Dest Location: %s\n"
-    "Dest Port: %s\n"
-    "Dst User: %s\n"
+    "SourceIp: %s\n"
+    "SourceLocation: %s\n"
+    "SourcePort: %s\n"
+    "DestinationIp: %s\n"
+    "DestLocation: %s\n"
+    "DestPort: %s\n"
+    "Username: %s\n"
     "Filename: %s\n"
-    "Perm Before: %d\n"
-    "Perm After: %d\n"
-    "MD5 Before: %s\n"
-    "MD5 After: %s\n"
-    "SHA1 Before: %s\n"
-    "SHA1 After: %s\n"
-    "Size Before: %s\n"
-    "Size After: %s\n"
-    "Owner Before: %s\n"
-    "Owner After: %s\n"
-    "Group Owner Before: %s\n"
-    "Group Owner After: %s\n"
-    "Full Log: %.1256s\n",
+    "PermBefore: %d\n"
+    "PermAfter: %d\n"
+    "Md5Before: %s\n"
+    "Md5After: %s\n"
+    "Sha1Before: %s\n"
+    "Sha1After: %s\n"
+    "SizeBefore: %s\n"
+    "SizeAfter: %s\n"
+    "OwnerBefore: %s\n"
+    "OwnerAfter: %s\n"
+    "GroupBefore: %s\n"
+    "GroupAfter: %s\n"
+    "FullLog: %.1256s\n",
     (long int)lf->time,
     __crt_ftell,
     lf->generated_rule->group == NULL ? "" : lf->generated_rule->group,
@@ -276,7 +276,7 @@
     if (lf->generated_rule->last_events) {
         char **lasts = lf->generated_rule->last_events;
         while (*lasts) {
-            printf("Events: %.1256s\n", *lasts);
+            printf("LastEvents: %.1256s\n", *lasts);
             lasts++;
         }
         lf->generated_rule->last_events[0] = NULL;
@@ -307,7 +307,7 @@
     /* Writing to the alert log file */
     fprintf(_aflog,
     "-- BEGIN ALERT --\n"
-    "Alert ID: %ld.%ld\n"
+    "AlertId: %ld.%ld\n"
     "Group: %s\n"
     "Year: %d\n"
     "Month: %s\n"
@@ -315,37 +315,37 @@
     "Time: %s\n"
     "Hostname: %s\n"
     "Location: %s\n"
-    "Rule Sig ID: %d\n"
-    "Fired Times: %d\n"
+    "RuleId: %d\n"
+    "FiredTimes: %d\n"
     "Level: %d\n"
-    "CVE: %s\n"
+    "Cve: %s\n"
     "Action: %s\n"
     "Comment: '%s'\n"
-    "Program Name: %s\n"
-    "URL: %s\n"
+    "ProgramName: %s\n"
+    "Url: %s\n"
     "Status: %s\n"
     "Protocol: %s\n"
-    "Source IP: %s\n"
-    "Source Location: %s\n"
-    "Source Port: %s\n"
-    "Destination IP: %s\n"
-    "Dest Location: %s\n"
-    "Dest Port: %s\n"
-    "Dst User: %s\n"
+    "SourceIp: %s\n"
+    "SourceLocation: %s\n"
+    "SourcePort: %s\n"
+    "DestinationIp: %s\n"
+    "DestLocation: %s\n"
+    "DestPort: %s\n"
+    "Username: %s\n"
     "Filename: %s\n"
-    "Perm Before: %d\n"
-    "Perm After: %d\n"
-    "MD5 Before: %s\n"
-    "MD5 After: %s\n"
-    "SHA1 Before: %s\n"
-    "SHA1 After: %s\n"
-    "Size Before: %s\n"
-    "Size After: %s\n"
-    "Owner Before: %s\n"
-    "Owner After: %s\n"
-    "Group Owner Before: %s\n"
-    "Group Owner After: %s\n"
-    "Full Log: %.1256s\n",
+    "PermBefore: %d\n"
+    "PermAfter: %d\n"
+    "Md5Before: %s\n"
+    "Md5After: %s\n"
+    "Sha1Before: %s\n"
+    "Sha1After: %s\n"
+    "SizeBefore: %s\n"
+    "SizeAfter: %s\n"
+    "OwnerBefore: %s\n"
+    "OwnerAfter: %s\n"
+    "GroupBefore: %s\n"
+    "GroupAfter: %s\n"
+    "FullLog: %.1256s\n",
     (long int)lf->time,
     __crt_ftell,
     lf->generated_rule->group == NULL ? "" : lf->generated_rule->group,
@@ -401,7 +401,7 @@
     if (lf->generated_rule->last_events) {
         char **lasts = lf->generated_rule->last_events;
         while (*lasts) {
-            fprintf(_aflog, "Events:%.1256s\n", *lasts);
+            fprintf(_aflog, "LastEvents: %.1256s\n", *lasts);
             lasts++;
         }
         lf->generated_rule->last_events[0] = NULL;
