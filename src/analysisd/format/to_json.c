@@ -47,7 +47,9 @@ char* Eventinfo_to_jsonstr(const Eventinfo* lf)
             cJSON_AddStringToObject(rule, "description", lf->comment);
         }
         if(lf->generated_rule->sigid) {
-            cJSON_AddNumberToObject(rule, "id", lf->generated_rule->sigid);
+            char id[12];
+            snprintf(id, 12, "%d", lf->generated_rule->sigid);
+            cJSON_AddStringToObject(rule, "id", id);
         }
         if(lf->generated_rule->cve) {
             cJSON_AddStringToObject(rule, "cve", lf->generated_rule->cve);
@@ -162,13 +164,13 @@ char* Eventinfo_to_jsonstr(const Eventinfo* lf)
             cJSON_AddStringToObject(file_diff, "gname_after", lf->gname_after);
         }
         if (lf->mtime_before) {
-            char mtime[20];
-            strftime(mtime, 20, "%FT%T", localtime(&lf->mtime_before));
+            char mtime[25];
+            strftime(mtime, 20, "%FT%T%z", localtime(&lf->mtime_before));
             cJSON_AddStringToObject(file_diff, "mtime_before", mtime);
         }
         if (lf->mtime_after) {
-            char mtime[20];
-            strftime(mtime, 20, "%FT%T", localtime(&lf->mtime_after));
+            char mtime[25];
+            strftime(mtime, 20, "%FT%T%z", localtime(&lf->mtime_after));
             cJSON_AddStringToObject(file_diff, "mtime_after", mtime);
         }
         if (lf->inode_before) {

@@ -59,6 +59,9 @@ static void add_backup(const keyentry *entry);
 /* Signal handler */
 static void handler(int signum);
 
+/* Exit handler */
+static void cleanup();
+
 /* Shared variables */
 char *authpass = NULL;
 const char *ca_cert = NULL;
@@ -68,6 +71,7 @@ SSL_CTX *ctx;
 int force_antiquity = -1;
 int m_queue = 0;
 int sock = 0;
+int save_removed = 1;
 
 keystore keys;
 struct client pool[POOL_SIZE];
@@ -98,6 +102,7 @@ static void help_authd()
     print_out("    -t          Test configuration");
     print_out("    -i          Use client's source IP address");
     print_out("    -f <sec>    Remove old agents with same IP if disconnected since <sec> seconds");
+    print_out("    -r          Do not keep removed agents (delete).");
     print_out("    -g <group>  Group to run as (default: %s)", GROUPGLOBAL);
     print_out("    -D <dir>    Directory to chroot into (default: %s)", DEFAULTDIR);
     print_out("    -p <port>   Manager port (default: %d)", DEFAULT_PORT);
@@ -201,7 +206,7 @@ int main(int argc, char **argv)
     /* Set the name */
     OS_SetName(ARGV0);
 
-    while ((c = getopt(argc, argv, "Vdhtig:D:p:v:sx:k:Pf:a")) != -1) {
+    while ((c = getopt(argc, argv, "Vdhtig:D:p:v:sx:k:Pf:ar")) != -1) {
         char *end;
 
         switch (c) {
@@ -274,6 +279,9 @@ int main(int argc, char **argv)
                 if (optarg == end || force_antiquity < 0)
                     ErrorExit("%s: Invalid number for -f", ARGV0);
 
+                break;
+            case 'r':
+                save_removed = 0;
                 break;
             case 'a':
                 auto_method = 1;
@@ -420,6 +428,8 @@ int main(int argc, char **argv)
         ErrorExit(PID_ERROR, ARGV0);
     }
 
+    atexit(cleanup);
+
     /* Main loop */
 
     while (running) {
@@ -456,9 +466,7 @@ int main(int argc, char **argv)
     pthread_join(thread_dispatcher, NULL);
     pthread_join(thread_writer, NULL);
 
-    DeletePID(ARGV0);
     verbose("%s: Exiting...", ARGV0);
-
     return (0);
 }
 
@@ -483,7 +491,7 @@ void* run_dispatcher(__attribute__((unused)) void *arg) {
     /* Initialize some variables */
     memset(srcip, '\0', IPSIZE + 1);
 
-    OS_ReadKeys(&keys, 0);
+    OS_ReadKeys(&keys, 0, save_removed);
     debug1("%s: DEBUG: Dispatch thread ready", ARGV0);
 
     while (running) {
@@ -797,6 +805,11 @@ static void handler(int signum) {
     default:
         merror("%s: ERROR: unknown signal (%d)", ARGV0, signum);
     }
+}
+
+/* Exit handler */
+static void cleanup() {
+    DeletePID(ARGV0);
 }
 
 #endif /* LIBOPENSSL_ENABLED */

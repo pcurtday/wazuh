@@ -1,7 +1,7 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
-## [v1.2]
+## [v2.0]
 
 ### Added
 
@@ -46,6 +46,7 @@ All notable changes to this project will be documented in this file.
 - Added XML settings options to exclude some rules or decoders files.
 - Option for agent_control to broadcast AR on all agents.
 - Extended FIM event information forwarded by csyslogd (by Sivakumar Nellurandi).
+- Report Syscheck's new file events on real time.
 
 ### Changed
 
@@ -93,6 +94,13 @@ All notable changes to this project will be documented in this file.
 - New folder structure for rules and decoders.
 - More descriptive logs about syscheck real-time monitoring.
 - Renamed XML tags related to rules and decoders inclusion.
+- Set default maximum agents to 8000.
+- Removed FTS numeric bitfield from JSON output.
+- Fixed ID misasignation by manage_agents when the gratest ID exceeds 32512.
+- Run Windows Registry Syscheck scan on first stage when scan_on_start enabled.
+- Set all Syscheck delay stages to a multiple of internal_options.conf/syscheck.sleep value.
+- Changed JSON timestamp format to ISO8601.
+- Overwrite @timestamp field from Logstash with the alert timestamp.
 
 ### Fixed
 
@@ -149,6 +157,10 @@ All notable changes to this project will be documented in this file.
 - Fixed misinterpretation of octal permissions given by Agentless (by Stephan Leemburg).
 - Fixed mistake incorrect openssl flag at Makefile (by Stephan Leemburg).
 - Silence Slack integration transmission messages (by Dan Parriot).
+- Fixed OpenSUSE Systemd misconfiguration (By Stephan Joerrens).
+- Fixed case issue on JSON output for Rootcheck alerts.
+- Fixed potential issue on duplicated agent ID detection.
+- Fixed issue when creating agent backups.
 
 ### Removed
 
