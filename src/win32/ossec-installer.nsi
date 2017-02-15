@@ -19,14 +19,14 @@
 
 ; output file
 !ifndef OutFile
-    !define OutFile "wazuh-win32-agent.exe"
+    !define OutFile "ossec-win32-agent.exe"
 !endif
 
 ; general
 !define MUI_ICON favicon.ico
 !define MUI_UNICON ossec-uninstall.ico
 !define VERSION "2.0"
-!define NAME "Wazuh"
+!define NAME "OSSEC HIDS"
 !define SERVICE "OssecSvc"
 
 Name "${NAME} Windows Agent v${VERSION}"
