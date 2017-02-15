@@ -96,126 +96,106 @@ void OS_LogOutput(Eventinfo *lf)
 #endif
 
     printf(
-        "** Alert %ld.%ld:%s - %s\n"
-        "%d %s %02d %s %s%s%s\nRule: %d (level %d) -> '%s'"
-        "%s%s%s%s%s%s%s%s%s%s%s%s%s%s\n%.1256s\n",
-        (long int)lf->time,
-        __crt_ftell,
-        lf->generated_rule->alert_opts & DO_MAILALERT ? " mail " : "",
-        lf->generated_rule->group,
-        lf->year,
-        lf->mon,
-        lf->day,
-        lf->hour,
-        lf->hostname != lf->location ? lf->hostname : "",
-        lf->hostname != lf->location ? "->" : "",
-        lf->location,
-        lf->generated_rule->sigid,
-        lf->generated_rule->level,
-        lf->comment,
-
-        lf->srcip == NULL ? "" : "\nSrc IP: ",
-        lf->srcip == NULL ? "" : lf->srcip,
+    "-- BEGIN ALERT --\n"
+    "AlertId: %ld.%ld\n"
+    "Group: %s\n"
+    "Year: %d\n"
+    "Month: %s\n"
+    "Day: %02d\n"
+    "Time: %s\n"
+    "Hostname: %s\n"
+    "Location: %s\n"
+    "RuleId: %d\n"
+    "FiredTimes: %d\n"
+    "Level: %d\n"
+    "Cve: %s\n"
+    "Action: %s\n"
+    "Comment: '%s'\n"
+    "ProgramName: %s\n"
+    "Url: %s\n"
+    "Status: %s\n"
+    "Protocol: %s\n"
+    "SourceIp: %s\n"
+    "SourceLocation: %s\n"
+    "SourcePort: %s\n"
+    "DestinationIp: %s\n"
+    "DestLocation: %s\n"
+    "DestPort: %s\n"
+    "Username: %s\n"
+    "Filename: %s\n"
+    "PermBefore: %d\n"
+    "PermAfter: %d\n"
+    "Md5Before: %s\n"
+    "Md5After: %s\n"
+    "Sha1Before: %s\n"
+    "Sha1After: %s\n"
+    "SizeBefore: %s\n"
+    "SizeAfter: %s\n"
+    "OwnerBefore: %s\n"
+    "OwnerAfter: %s\n"
+    "GroupBefore: %s\n"
+    "GroupAfter: %s\n"
+    "DateBefore: %s\n"
+    "DateAfter: %s\n"
+    "InodeBefore: %ld\n"
+    "InodeAfter: %ld\n"
+    "Change: %s\n"
+    "FullLog: %.1256s\n",
+    (long int)lf->time,
+    __crt_ftell,
+    lf->generated_rule->group == NULL ? "" : lf->generated_rule->group,
+    lf->year,
+    lf->mon,
+    lf->day,
+    lf->hour,
+    lf->hostname == NULL ? "" : lf->hostname,
+    lf->location == NULL ? "" : lf->location,
+    lf->generated_rule->sigid,
+    lf->generated_rule->firedtimes,
+    lf->generated_rule->level,
+    lf->generated_rule->cve == NULL ? "" : lf->generated_rule->cve,
+    lf->action == NULL ? "" : lf->action,
+    lf->generated_rule->comment == NULL ? "" : lf->generated_rule->comment,
+    lf->program_name == NULL ? "" : lf->program_name,
+    lf->url == NULL ? "" : lf->url,
+    lf->status == NULL ? "" : lf->status,
+    lf->protocol == NULL ? "" : lf->protocol,
+    lf->srcip == NULL ? "" : lf->srcip,
 
 #ifdef LIBGEOIP_ENABLED
-        lf->srcgeoip == NULL ? "" : "\nSrc Location: ",
-        lf->srcgeoip == NULL ? "" : lf->srcgeoip,
+    (strlen(geoip_msg_src) == 0) ? "" : geoip_msg_src,
 #else
-        "",
-        "",
+    "",
 #endif
-
-
-
-        lf->srcport == NULL ? "" : "\nSrc Port: ",
-        lf->srcport == NULL ? "" : lf->srcport,
-
-        lf->dstip == NULL ? "" : "\nDst IP: ",
-        lf->dstip == NULL ? "" : lf->dstip,
+    lf->srcport == NULL ? "" : lf->srcport,
+    lf->dstip == NULL ? "" : lf->dstip,
 
 #ifdef LIBGEOIP_ENABLED
-        lf->dstgeoip == NULL ? "" : "\nDst Location: ",
-        lf->dstgeoip == NULL ? "" : lf->dstgeoip,
+    (strlen(geoip_msg_dst) == 0) ? "" : geoip_msg_dst,
 #else
-        "",
-        "",
+    "",
 #endif
-
-
-
-        lf->dstport == NULL ? "" : "\nDst Port: ",
-        lf->dstport == NULL ? "" : lf->dstport,
-
-        lf->dstuser == NULL ? "" : "\nUser: ",
-        lf->dstuser == NULL ? "" : lf->dstuser,
-
-        lf->full_log);
-
-    /* FIM events */
-
-    if (lf->filename) {
-        printf("File: %s\n", lf->filename);
-
-        if (lf->size_before)
-            printf("Old size: %s\n", lf->size_before);
-        if (lf->size_after)
-            printf("New size: %s\n", lf->size_after);
-
-        if (lf->perm_before)
-            printf("Old permissions: %6o\n", lf->perm_before);
-        if (lf->perm_after)
-            printf("New permissions: %6o\n", lf->perm_after);
-
-        if (lf->owner_before) {
-            if (lf->uname_before)
-                printf("Old user: %s (%s)\n", lf->uname_before, lf->owner_before);
-            else
-                printf("Old user: %s\n", lf->owner_before);
-        }
-        if (lf->owner_after) {
-            if (lf->uname_after)
-                printf("New user: %s (%s)\n", lf->uname_after, lf->owner_after);
-            else
-                printf("New user: %s\n", lf->owner_after);
-        }
-
-        if (lf->gowner_before) {
-            if (lf->gname_before)
-                printf("Old group: %s (%s)\n", lf->gname_before, lf->gowner_before);
-            else
-                printf("Old group: %s\n", lf->gowner_before);
-        }
-        if (lf->gowner_after) {
-            if (lf->gname_after)
-                printf("New group: %s (%s)\n", lf->gname_after, lf->gowner_after);
-            else
-                printf("New group: %s\n", lf->gowner_after);
-        }
-
-        if (lf->md5_before)
-            printf("Old MD5: %s\n", lf->md5_before);
-        if (lf->md5_after)
-            printf("New MD5: %s\n", lf->md5_after);
-
-
-        if (lf->sha1_before)
-            printf("Old SHA1: %s\n", lf->sha1_before);
-        if (lf->sha1_after)
-            printf("New SHA1: %s\n", lf->sha1_after);
-
-        if (lf->mtime_before)
-            printf("Old date: %s", ctime(&lf->mtime_before));
-        if (lf->mtime_after)
-            printf("New date: %s", ctime(&lf->mtime_after));
-
-        if (lf->inode_before)
-            printf("Old inode: %ld\n", lf->inode_before);
-        if (lf->inode_after)
-            printf("New inode: %ld\n", lf->inode_after);
-
-        if (lf->diff)
-            printf("What changed: %s\n", lf->diff);
-    }
+    lf->dstport == NULL ? "" : lf->dstport,
+    lf->dstuser == NULL ? "" : lf->dstuser,
+    lf->filename == NULL ? "" : lf->filename,
+    lf->perm_before,
+    lf->perm_after,
+    lf->md5_before == NULL ? "" : lf->md5_before,
+    lf->md5_after == NULL ? "" : lf->md5_after,
+    lf->sha1_before == NULL ? "" : lf->sha1_before,
+    lf->sha1_after == NULL ? "" : lf->sha1_after,
+    lf->size_before == NULL ? "" : lf->size_before,
+    lf->size_after == NULL ? "" : lf->size_after,
+    lf->owner_before == NULL ? "" : lf->owner_before,
+    lf->owner_after == NULL ? "" : lf->owner_after,
+    lf->gowner_before == NULL ? "" : lf->gowner_before,
+    lf->gowner_after == NULL ? "" : lf->gowner_after,
+    lf->mtime_before == NULL ? "" : ctime(&lf->mtime_before),
+    lf->mtime_after == NULL ? "" : ctime(&lf->mtime_after),
+    lf->inode_before == NULL ? "" : lf->inode_before,
+    lf->inode_after == NULL ? "" : lf->inode_after,
+    lf->diff == NULL ? "" : lf->diff,
+    lf->full_log == NULL ? "" : lf->full_log);
 
     // Dynamic fields, except for syscheck events
     if (lf->fields && !lf->filename) {
@@ -230,13 +210,13 @@ void OS_LogOutput(Eventinfo *lf)
     if (lf->generated_rule->last_events) {
         char **lasts = lf->generated_rule->last_events;
         while (*lasts) {
-            printf("%.1256s\n", *lasts);
+            printf("LastEvents: %.1256s\n", *lasts);
             lasts++;
         }
         lf->generated_rule->last_events[0] = NULL;
     }
 
-    printf("\n");
+    printf("-- END ALERT --\n");
 
     fflush(stdout);
     return;
@@ -258,126 +238,107 @@ void OS_Log(Eventinfo *lf)
 #endif
 
     /* Writing to the alert log file */
-    fprintf(_aflog,
-            "** Alert %ld.%ld:%s - %s\n"
-            "%d %s %02d %s %s%s%s\nRule: %d (level %d) -> '%s'"
-            "%s%s%s%s%s%s%s%s%s%s%s%s%s%s\n%.1256s\n",
-            (long int)lf->time,
-            __crt_ftell,
-            lf->generated_rule->alert_opts & DO_MAILALERT ? " mail " : "",
-            lf->generated_rule->group,
-            lf->year,
-            lf->mon,
-            lf->day,
-            lf->hour,
-            lf->hostname != lf->location ? lf->hostname : "",
-            lf->hostname != lf->location ? "->" : "",
-            lf->location,
-            lf->generated_rule->sigid,
-            lf->generated_rule->level,
-            lf->comment,
-
-            lf->srcip == NULL ? "" : "\nSrc IP: ",
-            lf->srcip == NULL ? "" : lf->srcip,
+fprintf(_aflog,
+    "-- BEGIN ALERT --\n"
+    "AlertId: %ld.%ld\n"
+    "Group: %s\n"
+    "Year: %d\n"
+    "Month: %s\n"
+    "Day: %02d\n"
+    "Time: %s\n"
+    "Hostname: %s\n"
+    "Location: %s\n"
+    "RuleId: %d\n"
+    "FiredTimes: %d\n"
+    "Level: %d\n"
+    "Cve: %s\n"
+    "Action: %s\n"
+    "Comment: '%s'\n"
+    "ProgramName: %s\n"
+    "Url: %s\n"
+    "Status: %s\n"
+    "Protocol: %s\n"
+    "SourceIp: %s\n"
+    "SourceLocation: %s\n"
+    "SourcePort: %s\n"
+    "DestinationIp: %s\n"
+    "DestLocation: %s\n"
+    "DestPort: %s\n"
+    "Username: %s\n"
+    "Filename: %s\n"
+    "PermBefore: %d\n"
+    "PermAfter: %d\n"
+    "Md5Before: %s\n"
+    "Md5After: %s\n"
+    "Sha1Before: %s\n"
+    "Sha1After: %s\n"
+    "SizeBefore: %s\n"
+    "SizeAfter: %s\n"
+    "OwnerBefore: %s\n"
+    "OwnerAfter: %s\n"
+    "GroupBefore: %s\n"
+    "GroupAfter: %s\n"
+    "DateBefore: %s\n"
+    "DateAfter: %s\n"
+    "InodeBefore: %ld\n"
+    "InodeAfter: %ld\n"
+    "Change: %s\n"
+    "FullLog: %.1256s\n",
+    (long int)lf->time,
+    __crt_ftell,
+    lf->generated_rule->group == NULL ? "" : lf->generated_rule->group,
+    lf->year,
+    lf->mon,
+    lf->day,
+    lf->hour,
+    lf->hostname == NULL ? "" : lf->hostname,
+    lf->location == NULL ? "" : lf->location,
+    lf->generated_rule->sigid,
+    lf->generated_rule->firedtimes,
+    lf->generated_rule->level,
+    lf->generated_rule->cve == NULL ? "" : lf->generated_rule->cve,
+    lf->action == NULL ? "" : lf->action,
+    lf->generated_rule->comment == NULL ? "" : lf->generated_rule->comment,
+    lf->program_name == NULL ? "" : lf->program_name,
+    lf->url == NULL ? "" : lf->url,
+    lf->status == NULL ? "" : lf->status,
+    lf->protocol == NULL ? "" : lf->protocol,
+    lf->srcip == NULL ? "" : lf->srcip,
 
 #ifdef LIBGEOIP_ENABLED
-            lf->srcgeoip == NULL ? "" : "\nSrc Location: ",
-            lf->srcgeoip == NULL ? "" : lf->srcgeoip,
+    (strlen(geoip_msg_src) == 0) ? "" : geoip_msg_src,
 #else
-            "",
-            "",
+    "",
 #endif
-
-
-            lf->srcport == NULL ? "" : "\nSrc Port: ",
-            lf->srcport == NULL ? "" : lf->srcport,
-
-            lf->dstip == NULL ? "" : "\nDst IP: ",
-            lf->dstip == NULL ? "" : lf->dstip,
+    lf->srcport == NULL ? "" : lf->srcport,
+    lf->dstip == NULL ? "" : lf->dstip,
 
 #ifdef LIBGEOIP_ENABLED
-            lf->dstgeoip == NULL ? "" : "\nDst Location: ",
-            lf->dstgeoip == NULL ? "" : lf->dstgeoip,
+    (strlen(geoip_msg_dst) == 0) ? "" : geoip_msg_dst,
 #else
-            "",
-            "",
+    "",
 #endif
-
-
-
-            lf->dstport == NULL ? "" : "\nDst Port: ",
-            lf->dstport == NULL ? "" : lf->dstport,
-
-            lf->dstuser == NULL ? "" : "\nUser: ",
-            lf->dstuser == NULL ? "" : lf->dstuser,
-
-            lf->full_log);
-
-    /* FIM events */
-
-    if (lf->filename) {
-        fprintf(_aflog, "File: %s\n", lf->filename);
-
-        if (lf->size_before)
-            fprintf(_aflog, "Old size: %s\n", lf->size_before);
-        if (lf->size_after)
-            fprintf(_aflog, "New size: %s\n", lf->size_after);
-
-        if (lf->perm_before)
-            fprintf(_aflog, "Old permissions: %6o\n", lf->perm_before);
-        if (lf->perm_after)
-            fprintf(_aflog, "New permissions: %6o\n", lf->perm_after);
-
-        if (lf->owner_before) {
-            if (lf->uname_before)
-                fprintf(_aflog, "Old user: %s (%s)\n", lf->uname_before, lf->owner_before);
-            else
-                fprintf(_aflog, "Old user: %s\n", lf->owner_before);
-        }
-        if (lf->owner_after) {
-            if (lf->uname_after)
-                fprintf(_aflog, "New user: %s (%s)\n", lf->uname_after, lf->owner_after);
-            else
-                fprintf(_aflog, "New user: %s\n", lf->owner_after);
-        }
-
-        if (lf->gowner_before) {
-            if (lf->gname_before)
-                fprintf(_aflog, "Old group: %s (%s)\n", lf->gname_before, lf->gowner_before);
-            else
-                fprintf(_aflog, "Old group: %s\n", lf->gowner_before);
-        }
-        if (lf->gowner_after) {
-            if (lf->gname_after)
-                fprintf(_aflog, "New group: %s (%s)\n", lf->gname_after, lf->gowner_after);
-            else
-                fprintf(_aflog, "New group: %s\n", lf->gowner_after);
-        }
-
-        if (lf->md5_before)
-            fprintf(_aflog, "Old MD5: %s\n", lf->md5_before);
-        if (lf->md5_after)
-            fprintf(_aflog, "New MD5: %s\n", lf->md5_after);
-
-
-        if (lf->sha1_before)
-            fprintf(_aflog, "Old SHA1: %s\n", lf->sha1_before);
-        if (lf->sha1_after)
-            fprintf(_aflog, "New SHA1: %s\n", lf->sha1_after);
-
-        if (lf->mtime_before)
-            fprintf(_aflog, "Old date: %s", ctime(&lf->mtime_before));
-        if (lf->mtime_after)
-            fprintf(_aflog, "New date: %s", ctime(&lf->mtime_after));
-
-        if (lf->inode_before)
-            fprintf(_aflog, "Old inode: %ld\n", lf->inode_before);
-        if (lf->inode_after)
-            fprintf(_aflog, "New inode: %ld\n", lf->inode_after);
-
-        if (lf->diff)
-            fprintf(_aflog, "What changed: %s\n", lf->diff);
-    }
+    lf->dstport == NULL ? "" : lf->dstport,
+    lf->dstuser == NULL ? "" : lf->dstuser,
+    lf->filename == NULL ? "" : lf->filename,
+    lf->perm_before,
+    lf->perm_after,
+    lf->md5_before == NULL ? "" : lf->md5_before,
+    lf->md5_after == NULL ? "" : lf->md5_after,
+    lf->sha1_before == NULL ? "" : lf->sha1_before,
+    lf->sha1_after == NULL ? "" : lf->sha1_after,
+    lf->size_before == NULL ? "" : lf->size_before,
+    lf->size_after == NULL ? "" : lf->size_after,
+    lf->owner_before == NULL ? "" : lf->owner_before,
+    lf->owner_after == NULL ? "" : lf->owner_after,
+    lf->gowner_before == NULL ? "" : lf->gowner_before,
+    lf->gowner_after == NULL ? "" : lf->gowner_after,
+    lf->mtime_before == NULL ? "" : ctime(&lf->mtime_before),
+    lf->mtime_after == NULL ? "" : ctime(&lf->mtime_after),
+    lf->inode_before == NULL ? "" : lf->inode_before,
+    lf->inode_after == NULL ? "" : lf->inode_after,
+    lf->diff == NULL ? "" : lf->diff,
+    lf->full_log == NULL ? "" : lf->full_log);
 
     // Dynamic fields, except for syscheck events
     if (lf->fields && !lf->filename) {
@@ -392,13 +353,13 @@ void OS_Log(Eventinfo *lf)
     if (lf->generated_rule->last_events) {
         char **lasts = lf->generated_rule->last_events;
         while (*lasts) {
-            fprintf(_aflog, "%.1256s\n", *lasts);
+            fprintf(_aflog, "LastEvents: %.1256s\n", *lasts);
             lasts++;
         }
         lf->generated_rule->last_events[0] = NULL;
     }
 
-    fprintf(_aflog, "\n");
+    fprintf(_aflog, "-- END ALERT --\n");
     fflush(_aflog);
 
     return;
